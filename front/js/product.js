@@ -70,21 +70,30 @@ function checkQuantity(qty){
 }
 
 function stockage(prod){
-    //stocker prod dans local storage + controler si son id est déjà dedans puis controler si la couleur choisie est déjà dedans puis vérifier si quantité totale<100 changer quantité SINON créer nouvelle entrée dans local storage
-    if(!localStorage.getItem("cart")){
-        let newCart = [];
-        newCart.push(prod);
-        localStorage.setItem("cart", JSON.stringify(newCart));
+    let cart;
+    if(!localStorage.getItem("userCart")){
+      cart = [];
+      cart.push(prod);
     } else {
-        let cart= JSON.parse(localStorage.getItem("cart"));
-        let exist= stockageControl(cart, prod);
-    }
-    localStorage.setItem("cart", JSON.stringify(prod));
-    console.log(localStorage.getItem("cart"));
-}
-
-function stockageControl(cart, prod){
-    cart.forEach((element, item) => {
-        console.log(element + "___" + item)
-    });
+      cart = JSON.parse(localStorage.getItem("userCart"));
+  
+      let item = stockageControl(cart, prod);
+      if (false !== item) {
+        cart[item].quantity = parseInt(cart[item].quantity) + parseInt(prod.quantity);
+      } else {
+        cart.push(prod);
+      }
+    }  
+    localStorage.setItem("userCart", JSON.stringify(cart));
+    return cart; 
+  }
+  
+  function stockageControl(cart, prod){
+    let control = false;
+    cart.forEach((elem, item) => {
+      if(elem._id == prod._id && elem.color == prod.color){
+        control = item;
+      }     
+    });  
+    return control;
 }
